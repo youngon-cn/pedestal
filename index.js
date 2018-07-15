@@ -32,7 +32,6 @@ class Run {
     this.run()
   }
   async run() {
-    let startTime = new Date().getMilliseconds()
     this.PHPSESSID = await this._getCookie()
     if (await this._login() !== 'success') {
       console.log('登陆失败')
@@ -105,8 +104,6 @@ class Run {
       flagArray = await this._randomTen()
       stateResult = await this._concurrency(flagArray)
     }
-    let endTime = new Date().getMilliseconds()
-    console.log(`共计用时${startTime - endTime}毫秒`)
   }
 
   _randomTen() {
@@ -287,7 +284,7 @@ argv.shift()
 argv.shift()
 if (argv.length < 4) {
   console.log('参数不够')
-  return
+  process.exit(1)
 }
 
 new Run({
