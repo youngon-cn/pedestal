@@ -32,7 +32,6 @@ class Run {
     this.run()
   }
   async run() {
-    let startTime = new Date().getMilliseconds()
     this.PHPSESSID = await this._getCookie()
     if (await this._login() !== 'success') {
       console.log('登陆失败')
@@ -42,6 +41,7 @@ class Run {
     state = JSON.parse(state)
     if (!(state.label === "fail")) {
       console.log('你已经处于约座状态了')
+      console.log(state)
       return state
     }
 
@@ -98,20 +98,30 @@ class Run {
     let flagArray = await this._randomTen()
     let stateResult = await this._concurrency(flagArray)
     let i = 1
-    console.log(`正在进行第${i * 10}请求尝试`)
+    console.log(flagArray.length)
+    if (flagArray.length < 10) {
+      console.log(`第${flagArray.length}请求尝试`)
+    } else {
+      console.log(`第${i * 10}请求尝试`)
+    }
     while (stateResult && this.SateInfo.length >= 10) {
       i++
-      console.log(`正在进行第${i * 10}请求尝试`)
+      console.log(`第${i * 10}请求尝试`)
       flagArray = await this._randomTen()
       stateResult = await this._concurrency(flagArray)
     }
-    let endTime = new Date().getMilliseconds()
-    console.log(`共计用时${startTime - endTime}毫秒`)
+    console.log('完成')
   }
 
   _randomTen() {
     let flag = []
-    new Array(10).fill(0).forEach(() => {
+    let flagArray = []
+    if (this.SateInfo.length < 10) {
+      flagArray = new Array(this.SateInfo.length).fill(0)
+    } else {
+      flagArray =new Array(10).fill(0)
+    }
+    flagArray.forEach(() => {
       let less = this.SateInfo.splice((Math.floor(Math.random() * this.SateInfo.length)), 1)[0]
       flag.push(less)
     })
@@ -168,7 +178,7 @@ class Run {
       bespeak5,
       bespeak6
     } = less
-    if (Number(use_status) && !Number(bespeak0) &&
+    if (!Number(use_status) && !Number(bespeak0) &&
       !Number(bespeak1) && !Number(bespeak2) &&
       !Number(bespeak3) && !Number(bespeak4) &&
       !Number(bespeak5) && !Number(bespeak6)) {
@@ -184,6 +194,8 @@ class Run {
         this.SateInfo.push(item)
       }
     })
+    console.log(this.trueNum)
+    console.log(this.SateInfo.length)
   }
 
   async _checkCanUseRoomNum(that) {
@@ -287,7 +299,7 @@ argv.shift()
 argv.shift()
 if (argv.length < 4) {
   console.log('参数不够')
-  return
+  process.exit(1)
 }
 
 new Run({
