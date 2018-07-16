@@ -110,10 +110,7 @@ class Run {
       flagArray = await this._randomTen()
       stateResult = await this._concurrency(flagArray)
     }
-<<<<<<< HEAD
     console.log('完成')
-=======
->>>>>>> 515a93c866b146c9c1d5d22d435926f913fbac0c
   }
 
   _randomTen() {
